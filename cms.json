@@ -1,0 +1,167 @@
+{
+  "supabase": {
+    "enabled": false,
+    "url": "",
+    "anonKey": "",
+    "configId": "default"
+  },
+  "branding": {
+    "name": "NANANI NANANA",
+    "slogan": "Musique · Art · Spectacle · Sport · Culture",
+    "eyebrow": "Média digital visuel"
+  },
+  "menu": [
+    { "target": "home", "label": "Accueil" },
+    { "target": "about", "label": "À propos" },
+    { "target": "media", "label": "Contenus" },
+    { "target": "contact", "label": "Contact" }
+  ],
+  "sections": {
+    "home": {
+      "cta": "Découvrir",
+      "hint": "Scroll pour entrer dans l’histoire."
+    },
+    "about": {
+      "title": "On parle de nous",
+      "text": "NANANI NANANA est un média artistique qui raconte la musique, l’art, le spectacle, le sport et la culture avec une approche visuelle forte : rythme, contraste, détails. Un minimalisme luxe, au service de l’immersion.",
+      "pills": ["Éditorial", "Visuel", "Communauté"],
+      "card": {
+        "label": "Notre angle",
+        "title": "Un luxe minimal, une intensité maximale.",
+        "copy": "Chaque section est une scène. Chaque scroll, un changement de décor."
+      }
+    },
+    "media": {
+      "title": "Contenus / Média",
+      "subtitle": "Ajoutez vos articles, vidéos, reels et capsules depuis le CMS."
+    },
+    "ads": {
+      "title": "Publicité",
+      "subtitle": "Emplacements éditables (images + liens) pour partenaires et campagnes."
+    },
+    "contact": {
+      "title": "Contact",
+      "text": "Une idée, une collaboration, un contenu ? Écrivez-nous.",
+      "note": "Le formulaire envoie un email via votre client mail (modifiable dans le CMS)."
+    }
+  },
+  "backgroundVideos": {
+    "home": {
+      "provider": "pixabay",
+      "src": "https://cdn.pixabay.com/video/2015/12/11/1630-148614385_large.mp4",
+      "poster": ""
+    },
+    "about": {
+      "provider": "pixabay",
+      "src": "https://cdn.pixabay.com/video/2021/10/06/91069-628462649_large.mp4",
+      "poster": ""
+    },
+    "media": {
+      "provider": "pixabay",
+      "src": "https://cdn.pixabay.com/video/2022/07/24/125366-733383427_large.mp4",
+      "poster": ""
+    },
+    "ads": {
+      "provider": "pixabay",
+      "src": "https://cdn.pixabay.com/video/2015/08/08/74-135732548_medium.mp4",
+      "poster": ""
+    },
+    "contact": {
+      "provider": "pixabay",
+      "src": "https://cdn.pixabay.com/video/2021/09/18/88921-608445975_large.mp4",
+      "poster": ""
+    }
+  },
+  "content": [
+    {
+      "title": "Live Session — l’énergie du plateau",
+      "tag": "Musique",
+      "meta": "Capsule vidéo · 1:30",
+      "description": "Backstage, lumière, énergie live.",
+      "url": "https://example.com",
+      "videoUrl": "https://cdn.pixabay.com/video/2022/07/24/125366-733383427_large.mp4",
+      "thumbnail": "https://cdn.pixabay.com/video/2022/07/24/125366-733383427_tiny.jpg"
+    },
+    {
+      "title": "Danse & spectacle — focus scène",
+      "tag": "Spectacle",
+      "meta": "Article · Lecture 4 min",
+      "description": "Corps en mouvement, rythme et détails.",
+      "url": "https://example.com",
+      "videoUrl": "https://cdn.pixabay.com/video/2022/07/24/125366-733383427_large.mp4",
+      "thumbnail": "https://cdn.pixabay.com/video/2022/07/24/125366-733383427_tiny.jpg"
+    },
+    {
+      "title": "Sport — mouvement, lumière, vitesse",
+      "tag": "Sport",
+      "meta": "Galerie · 12 photos",
+      "description": "Impact, lignes, intensité.",
+      "url": "https://example.com",
+      "videoUrl": "https://cdn.pixabay.com/video/2023/11/13/189035-884476358_large.mp4",
+      "thumbnail": "https://cdn.pixabay.com/video/2023/11/13/189035-884476358_tiny.jpg"
+    },
+    {
+      "title": "Art visuel — atelier & matière",
+      "tag": "Art",
+      "meta": "Interview · 6 min",
+      "description": "Textures, gestes, création.",
+      "url": "https://example.com",
+      "videoUrl": "https://cdn.pixabay.com/video/2023/11/13/189035-884476358_large.mp4",
+      "thumbnail": "https://cdn.pixabay.com/video/2023/11/13/189035-884476358_tiny.jpg"
+    },
+    {
+      "title": "Culture urbaine — ville, styles, voix",
+      "tag": "Culture",
+      "meta": "Sélection · 7 liens",
+      "description": "La ville comme scène.",
+      "url": "https://example.com",
+      "videoUrl": "https://cdn.pixabay.com/video/2022/07/24/125366-733383427_large.mp4",
+      "thumbnail": "https://cdn.pixabay.com/video/2022/07/24/125366-733383427_tiny.jpg"
+    },
+    {
+      "title": "Agenda — dates à ne pas manquer",
+      "tag": "Agenda",
+      "meta": "Mise à jour hebdo",
+      "description": "Sorties, scènes, événements.",
+      "url": "https://example.com",
+      "videoUrl": "https://cdn.pixabay.com/video/2023/11/13/189035-884476358_large.mp4",
+      "thumbnail": "https://cdn.pixabay.com/video/2023/11/13/189035-884476358_tiny.jpg"
+    }
+  ],
+  "ads": [
+    {
+      "label": "Partenaire — Emplacement 1",
+      "imageUrl": "https://picsum.photos/seed/nanani-ad-1/1200/700",
+      "linkUrl": "https://example.com"
+    },
+    {
+      "label": "Campagne — Emplacement 2",
+      "imageUrl": "https://picsum.photos/seed/nanani-ad-2/1200/700",
+      "linkUrl": "https://example.com"
+    }
+  ],
+  "blogPosts": [
+    {
+      "id": "post-1",
+      "title": "Bienvenue sur NANANI NANANA",
+      "slug": "bienvenue",
+      "excerpt": "Un média visuel : musique, art, spectacle, sport et culture.",
+      "coverUrl": "https://picsum.photos/seed/nanani-blog-1/1200/800",
+      "content": "Première publication.\n\nÉditez ce texte depuis le CMS.",
+      "published": true,
+      "date": "2026-03-27"
+    }
+  ],
+  "contact": {
+    "email": "contact@nanani-nanana.media",
+    "socials": [
+      { "label": "Instagram", "url": "https://instagram.com/" },
+      { "label": "TikTok", "url": "https://tiktok.com/" },
+      { "label": "YouTube", "url": "https://youtube.com/" }
+    ]
+  },
+  "providers": {
+    "pixabay": { "enabled": false, "apiKey": "" },
+    "pexels": { "enabled": false, "apiKey": "" }
+  }
+}

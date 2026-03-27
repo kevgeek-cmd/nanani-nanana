@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>CMS — NANANI NANANA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260324-8" />
+  </head>
+  <body class="admin">
+    <div class="cms-auth" id="authGate" hidden>
+      <div class="cms-auth__card">
+        <div class="cms-auth__brand">NANANI NANANA</div>
+        <div class="cms-auth__title">Administration</div>
+        <div class="cms-auth__subtitle">Connexion requise.</div>
+
+        <div class="cms-auth__error" id="authError" hidden></div>
+
+        <form class="cms-auth__form" id="authForm">
+          <label class="cms-field">
+            <span class="cms-field__label">Email</span>
+            <input class="cms-field__input" name="email" type="email" autocomplete="email" required />
+          </label>
+          <label class="cms-field">
+            <span class="cms-field__label">Mot de passe</span>
+            <input class="cms-field__input" name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <button class="btn btn--primary" type="submit" id="loginBtn">Se connecter</button>
+        </form>
+        
+      </div>
+    </div>
+
+    <div class="cms" id="cmsApp" hidden>
+      <aside class="cms__sidebar">
+        <div class="cms__brand">
+          <div class="cms__logo">NN</div>
+          <div class="cms__brandText">
+            <div class="cms__brandName">NANANI NANANA</div>
+            <div class="cms__brandSub">CMS</div>
+          </div>
+        </div>
+
+        <nav class="cms__nav" id="cmsNav" aria-label="Navigation CMS"></nav>
+
+        <div class="cms__sidebarFooter">
+          <button class="cms__smallBtn" type="button" id="exportBtn">Exporter</button>
+          <label class="cms__smallBtn" for="importFile">Importer</label>
+          <input id="importFile" type="file" accept="application/json" hidden />
+          <button class="cms__smallBtn" type="button" id="resetBtn">Reset</button>
+          <button class="cms__smallBtn cms__smallBtn--ghost" type="button" id="logoutBtn">Déconnexion</button>
+          <a class="cms__smallBtn cms__smallBtn--ghost" href="index.html">Retour site</a>
+        </div>
+      </aside>
+
+      <section class="cms__main">
+        <header class="cms__topbar">
+          <div class="cms__titleWrap">
+            <div class="cms__title" id="cmsTitle">Général</div>
+            <div class="cms__subtitle" id="cmsSubtitle">Paramètres du site et contenus.</div>
+          </div>
+          <div class="cms__topActions">
+            <button class="btn btn--primary" type="button" id="saveBtn">Enregistrer</button>
+          </div>
+        </header>
+
+        <main class="cms__content" id="adminRoot"></main>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.min.js" defer></script>
+    <script src="admin.js?v=20260324-9" defer></script>
+  </body>
+</html>

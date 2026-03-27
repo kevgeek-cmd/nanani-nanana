@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="NANANI NANANA — média digital visuel : musique, art, spectacle, sport, culture." />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>NANANI NANANA</title>
+
+    <meta property="og:title" content="NANANI NANANA" />
+    <meta property="og:description" content="Média digital visuel : musique, art, spectacle, sport, culture." />
+    <meta property="og:type" content="website" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260324-8" />
+  </head>
+  <body>
+    <div class="loader" id="loader" aria-hidden="true">
+      <div class="loader__inner">
+        <div class="loader__brand" id="loaderBrand">NANANI NANANA</div>
+        <div class="loader__line" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+    <header class="header" id="top">
+      <div class="header__inner">
+        <a class="brand" href="#home" id="brandTop">NANANI NANANA</a>
+        <nav class="nav" aria-label="Navigation principale" id="nav">
+          <a class="nav__link" href="#home" data-target="home">Accueil</a>
+          <a class="nav__link" href="#about" data-target="about">À propos</a>
+          <a class="nav__link" href="#media" data-target="media">Contenus</a>
+          <a class="nav__link" href="#contact" data-target="contact">Contact</a>
+        </nav>
+      </div>
+      <div class="progress" aria-hidden="true">
+        <div class="progress__bar" id="progressBar"></div>
+      </div>
+    </header>
+
+    <div class="bg" aria-hidden="true">
+      <video
+        class="bg__video bg__video--a is-active"
+        id="bgVideoA"
+        muted
+        playsinline
+        preload="none"
+      ></video>
+      <video class="bg__video bg__video--b" id="bgVideoB" muted playsinline preload="none"></video>
+      <div class="bg__overlay"></div>
+      <div class="bg__fallback" id="bgFallback"></div>
+    </div>
+
+    <main class="page" id="page">
+      <section class="panel panel--hero" id="home" data-video-key="home">
+        <div class="panel__content">
+          <p class="eyebrow" id="heroEyebrow">Média digital visuel</p>
+          <h1 class="hero__title" id="heroTitle">NANANI NANANA</h1>
+          <p class="lead" id="heroSlogan">Musique · Art · Spectacle · Sport · Culture</p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#about" id="heroCta">Découvrir</a>
+          </div>
+          <div class="hero__hint" id="heroHint">Scroll pour entrer dans l’histoire.</div>
+        </div>
+      </section>
+
+      <section class="panel" id="about" data-video-key="about">
+        <div class="panel__content panel__content--split">
+          <div>
+            <h2 class="h2" id="aboutTitle">On parle de nous</h2>
+            <p class="copy" id="aboutText">
+              NANANI NANANA est un média artistique qui capte l’énergie du live, la création en mouvement, et
+              les cultures qui transforment la ville.
+            </p>
+            <div class="pill-row" id="aboutPills">
+              <span class="pill">Éditorial</span>
+              <span class="pill">Visuel</span>
+              <span class="pill">Communauté</span>
+            </div>
+          </div>
+          <div class="card card--glass">
+            <div class="card__label" id="aboutCardLabel">Notre angle</div>
+            <div class="card__title" id="aboutCardTitle">Un luxe minimal, une intensité maximale.</div>
+            <div class="card__copy" id="aboutCardCopy">
+              Nous racontons la musique, l’art, le sport et la culture comme des scènes : immersion, rythme,
+              et détails.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="media" data-video-key="media">
+        <div class="panel__content">
+          <div class="section-head">
+            <h2 class="h2" id="mediaTitle">Contenus / Média</h2>
+            <p class="copy copy--muted" id="mediaSubtitle">
+              Une sélection dynamique d’articles, vidéos et capsules.
+            </p>
+          </div>
+          <div class="grid" id="mediaGrid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="ads" data-video-key="ads">
+        <div class="panel__content">
+          <div class="section-head">
+            <h2 class="h2" id="adsTitle">Publicité</h2>
+            <p class="copy copy--muted" id="adsSubtitle">Emplacements éditables pour partenaires et campagnes.</p>
+          </div>
+          <div class="ads" id="adsGrid"></div>
+        </div>
+      </section>
+
+      <section class="panel panel--contact" id="contact" data-video-key="contact">
+        <div class="panel__content panel__content--split">
+          <div>
+            <h2 class="h2" id="contactTitle">Contact</h2>
+            <p class="copy" id="contactText">Une idée, une collaboration, un contenu ? Écrivez-nous.</p>
+            <div class="contact-meta">
+              <a class="contact-meta__item" id="contactEmail" href="mailto:contact@nanani-nanana.media"
+                >contact@nanani-nanana.media</a
+              >
+              <div class="contact-meta__row" id="socialLinks"></div>
+            </div>
+          </div>
+
+          <form class="form" id="contactForm">
+            <label class="field">
+              <span class="field__label">Nom</span>
+              <input class="field__input" name="name" autocomplete="name" required />
+            </label>
+            <label class="field">
+              <span class="field__label">Email</span>
+              <input class="field__input" name="email" type="email" autocomplete="email" required />
+            </label>
+            <label class="field field--full">
+              <span class="field__label">Message</span>
+              <textarea class="field__input field__textarea" name="message" required></textarea>
+            </label>
+            <button class="btn btn--primary" type="submit" id="contactSubmit">Envoyer</button>
+            <div class="form__note" id="contactNote">
+              Le formulaire envoie un email via votre client mail (modifiable dans le CMS).
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="app.js?v=20260324-10" defer></script>
+  </body>
+</html>
