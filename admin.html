@@ -36,12 +36,14 @@
           </label>
           <button class="btn btn--primary" type="submit" id="loginBtn">Se connecter</button>
         </form>
-        
+        <div>
+          <a class="cms__smallBtn cms__smallBtn--ghost" href="index.html">Retour site</a>
+        </div>
       </div>
     </div>
 
     <div class="cms" id="cmsApp" hidden>
-      <aside class="cms__sidebar">
+      <aside class="cms__sidebar" id="cmsSidebar" hidden>
         <div class="cms__brand">
           <div class="cms__logo">NN</div>
           <div class="cms__brandText">
@@ -62,7 +64,7 @@
         </div>
       </aside>
 
-      <section class="cms__main">
+      <section class="cms__main" id="cmsMain" hidden>
         <header class="cms__topbar">
           <div class="cms__titleWrap">
             <div class="cms__title" id="cmsTitle">Général</div>

@@ -251,15 +251,23 @@ const setAuthError = (message) => {
 const showAuthGate = () => {
   const gate = byId("authGate");
   const app = byId("cmsApp");
+  const mainEl = byId("cmsMain");
+  const sidebar = byId("cmsSidebar");
   if (gate) gate.hidden = false;
   if (app) app.hidden = true;
+  if (mainEl) mainEl.hidden = true;
+  if (sidebar) sidebar.hidden = true;
 };
 
 const showCmsApp = () => {
   const gate = byId("authGate");
   const app = byId("cmsApp");
+  const mainEl = byId("cmsMain");
+  const sidebar = byId("cmsSidebar");
   if (gate) gate.hidden = true;
   if (app) app.hidden = false;
+  if (mainEl) mainEl.hidden = false;
+  if (sidebar) sidebar.hidden = false;
 };
 
 const getSupabaseClient = (cfg) => {
@@ -1326,12 +1334,7 @@ const main = async () => {
   wire();
 
   if (!supabaseClient) {
-    state = baseCfg;
-    const ui = safeJsonParse(localStorage.getItem(CMS_UI_KEY));
-    if (ui?.tab) activeTab = String(ui.tab);
-    if (ui?.post) selectedPostId = String(ui.post);
-    showCmsApp();
-    render();
+    showAuthGate();
     return;
   }
 
