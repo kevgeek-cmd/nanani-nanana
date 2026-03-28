@@ -1,8 +1,8 @@
 {
   "supabase": {
-    "enabled": false,
-    "url": "",
-    "anonKey": "",
+    "enabled": true,
+    "url": "https://pvkdstjxeirwiuudetgf.supabase.co",
+    "anonKey": "sb_publishable_pRMz3U1rSPV-13yk8v-T6A_7WcvAZQW",
     "configId": "default"
   },
   "branding": {
