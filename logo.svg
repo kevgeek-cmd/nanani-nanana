@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320">
+  <defs>
+    <style>
+      .n { font-family: "Times New Roman", Georgia, serif; font-weight: 700; }
+      .s { font-family: "Times New Roman", Georgia, serif; font-weight: 400; }
+      .m { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; font-weight: 400; letter-spacing: 0.14em; }
+    </style>
+  </defs>
+  <g fill="currentColor">
+    <text class="n" x="40" y="240" font-size="300">N</text>
+    <text class="s" x="310" y="150" font-size="150">anani</text>
+    <text class="s" x="310" y="270" font-size="150">anana</text>
+    <text class="m" x="820" y="270" font-size="64">LE MAG</text>
+  </g>
+</svg>

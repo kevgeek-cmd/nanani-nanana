@@ -1,4 +1,4 @@
-const CACHE_VERSION = "2026-03-28-1";
+const CACHE_VERSION = "2026-03-28-2";
 const CACHE_NAME = `nn-pwa-${CACHE_VERSION}`;
 const CORE_URLS = [
   "./",
@@ -9,6 +9,7 @@ const CORE_URLS = [
   "./admin.html",
   "./admin.js",
   "./manifest.webmanifest",
+  "./logo.svg",
   "./icon.svg",
   "./icon-maskable.svg"
 ];

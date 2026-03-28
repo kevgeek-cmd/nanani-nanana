@@ -26,7 +26,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="icon.svg" />
-    <link rel="stylesheet" href="styles.css?v=20260324-8" />
+    <link rel="stylesheet" href="styles.css?v=20260328-1" />
   </head>
   <body>
     <div class="loader" id="loader" aria-hidden="true">
@@ -40,7 +40,10 @@
 
     <header class="header" id="top">
       <div class="header__inner">
-        <a class="brand" href="#home" id="brandTop">NANANI NANANA</a>
+        <a class="brand" href="#home" aria-label="NANANI NANANA">
+          <img class="brand__logo" src="logo.svg" alt="" decoding="async" />
+          <span class="sr-only" id="brandTop">NANANI NANANA</span>
+        </a>
         <nav class="nav" aria-label="Navigation principale" id="nav">
           <a class="nav__link" href="#home" data-target="home">Accueil</a>
           <a class="nav__link" href="#about" data-target="about">À propos</a>
