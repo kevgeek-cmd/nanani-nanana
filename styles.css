@@ -35,7 +35,7 @@ body {
   background: var(--bg);
   color: var(--fg);
   overflow-x: hidden;
-  padding-top: 60px;
+  padding-top: 0;
 }
 
 a {
@@ -97,10 +97,7 @@ a {
 }
 
 .header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   z-index: 30;
   background: transparent;
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
@@ -136,6 +133,9 @@ body:not(.admin) .header {
   height: 26px;
   width: auto;
   display: block;
+  background: #ffffff;
+  padding: 6px 10px;
+  border-radius: 10px;
 }
 
 .sr-only {
