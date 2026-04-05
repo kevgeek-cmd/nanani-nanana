@@ -98,6 +98,7 @@ const normalizeConfig = (config) => {
     ads: [],
     contact: {
       email: "contact@nanani-nanana.media",
+      formEndpoint: "",
       socials: [
         { label: "Instagram", url: "https://instagram.com/" },
         { label: "TikTok", url: "https://tiktok.com/" },
@@ -359,7 +360,8 @@ const renderContact = (config) => {
 
   const form = byId("contactForm");
   if (form) {
-    form.addEventListener("submit", (e) => {
+    const btn = byId("contactSubmit");
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const fd = new FormData(form);
       const name = String(fd.get("name") || "").trim();
@@ -371,12 +373,36 @@ const renderContact = (config) => {
         return;
       }
 
-      const to = email || "contact@nanani-nanana.media";
-      const subject = encodeURIComponent(`NANANI NANANA — Message de ${name}`);
-      const body = encodeURIComponent(`Nom: ${name}\nEmail: ${from}\n\n${message}`);
-      window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-      showToast("Ouverture de votre client mail…");
-      form.reset();
+      const endpoint = String(config.contact?.formEndpoint || "").trim();
+
+      if (endpoint) {
+        if (btn) btn.textContent = "Envoi...";
+        try {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            body: fd,
+            headers: { Accept: "application/json" }
+          });
+          if (res.ok) {
+            showToast("Message envoyé avec succès !");
+            form.reset();
+          } else {
+            showToast("Erreur lors de l'envoi. Veuillez réessayer.");
+          }
+        } catch {
+          showToast("Erreur réseau. Impossible d'envoyer le message.");
+        } finally {
+          if (btn) btn.textContent = "Envoyer";
+        }
+      } else {
+        // Fallback to mailto
+        const to = email || "contact@nanani-nanana.media";
+        const subject = encodeURIComponent(`NANANI NANANA — Message de ${name}`);
+        const body = encodeURIComponent(`Nom: ${name}\nEmail: ${from}\n\n${message}`);
+        window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+        showToast("Ouverture de votre client mail…");
+        form.reset();
+      }
     });
   }
 };

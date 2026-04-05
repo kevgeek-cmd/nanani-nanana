@@ -98,6 +98,7 @@ const normalizeConfig = (config) => {
     blogPosts: [],
     contact: {
       email: "contact@nanani-nanana.media",
+      formEndpoint: "",
       socials: [
         { label: "Instagram", url: "https://instagram.com/" },
         { label: "TikTok", url: "https://tiktok.com/" },
@@ -1045,6 +1046,15 @@ const renderContact = () => {
           value: state.contact.email || "",
           onInput: (v) => {
             state.contact.email = v;
+            setDirty(true);
+          }
+        }),
+        field({
+          label: "URL du formulaire (ex: Formspree) — optionnel",
+          value: state.contact.formEndpoint || "",
+          placeholder: "https://formspree.io/f/...",
+          onInput: (v) => {
+            state.contact.formEndpoint = v;
             setDirty(true);
           }
         })

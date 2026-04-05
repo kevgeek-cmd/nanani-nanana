@@ -1,4 +1,4 @@
-const CACHE_VERSION = "2026-03-28-3";
+const CACHE_VERSION = "2026-03-28-4";
 const CACHE_NAME = `nn-pwa-${CACHE_VERSION}`;
 const CORE_URLS = [
   "./",
