@@ -154,7 +154,7 @@
   ],
   "contact": {
     "email": "contact@nanani-nanana.media",
-    "formEndpoint": "",
+    "web3formsKey": "08a0b771-4728-440b-b3b1-09f36a814611",
     "socials": [
       { "label": "Instagram", "url": "https://instagram.com/" },
       { "label": "TikTok", "url": "https://tiktok.com/" },

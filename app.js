@@ -98,7 +98,7 @@ const normalizeConfig = (config) => {
     ads: [],
     contact: {
       email: "contact@nanani-nanana.media",
-      formEndpoint: "",
+      web3formsKey: "",
       socials: [
         { label: "Instagram", url: "https://instagram.com/" },
         { label: "TikTok", url: "https://tiktok.com/" },
@@ -373,15 +373,24 @@ const renderContact = (config) => {
         return;
       }
 
-      const endpoint = String(config.contact?.formEndpoint || "").trim();
+      const accessKey = String(config.contact?.web3formsKey || "").trim();
 
-      if (endpoint) {
+      if (accessKey) {
         if (btn) btn.textContent = "Envoi...";
         try {
-          const res = await fetch(endpoint, {
+          const res = await fetch("https://api.web3forms.com/submit", {
             method: "POST",
-            body: fd,
-            headers: { Accept: "application/json" }
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({
+              access_key: accessKey,
+              name: name,
+              email: from,
+              message: message,
+              subject: `NANANI NANANA — Nouveau message de ${name}`
+            })
           });
           if (res.ok) {
             showToast("Message envoyé avec succès !");

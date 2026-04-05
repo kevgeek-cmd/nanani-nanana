@@ -98,7 +98,7 @@ const normalizeConfig = (config) => {
     blogPosts: [],
     contact: {
       email: "contact@nanani-nanana.media",
-      formEndpoint: "",
+      web3formsKey: "",
       socials: [
         { label: "Instagram", url: "https://instagram.com/" },
         { label: "TikTok", url: "https://tiktok.com/" },
@@ -1050,11 +1050,11 @@ const renderContact = () => {
           }
         }),
         field({
-          label: "URL du formulaire (ex: Formspree) — optionnel",
-          value: state.contact.formEndpoint || "",
-          placeholder: "https://formspree.io/f/...",
+          label: "Clé Web3Forms (Access Key) — pour recevoir les emails",
+          value: state.contact.web3formsKey || "",
+          placeholder: "ex: 08a0b771-4728-440b-b3b1-09f36a814611",
           onInput: (v) => {
-            state.contact.formEndpoint = v;
+            state.contact.web3formsKey = v;
             setDirty(true);
           }
         })
