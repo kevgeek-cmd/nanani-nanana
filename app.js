@@ -197,6 +197,7 @@ const renderContentGrid = (config) => {
   const items = Array.isArray(config.content) ? config.content : [];
   const fragment = document.createDocumentFragment();
   const canAutoplay = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   for (const item of items) {
     const title = String(item?.title || "").trim();
@@ -224,10 +225,11 @@ const renderContentGrid = (config) => {
       video.loop = true;
       video.preload = "none";
       if (thumbnail) video.poster = thumbnail;
-      video.dataset.src = videoUrl;
       media.appendChild(video);
 
-      if (canAutoplay) {
+      const hoverPlayback = canAutoplay && canHover;
+      if (hoverPlayback) {
+        video.dataset.src = videoUrl;
         const ensureSrc = () => {
           if (video.getAttribute("src")) return;
           const src = String(video.dataset.src || "").trim();
@@ -254,6 +256,22 @@ const renderContentGrid = (config) => {
         media.addEventListener("pointerleave", pause);
         media.addEventListener("focusin", play);
         media.addEventListener("focusout", pause);
+      } else {
+        // On touch/coarse pointers there is no hover, so load the source directly.
+        video.src = videoUrl;
+        try {
+          video.load();
+        } catch {}
+        if (canAutoplay) {
+          const tryAutoplay = async () => {
+            try {
+              const p = video.play();
+              if (p && typeof p.then === "function") await p;
+            } catch {}
+          };
+          video.addEventListener("canplay", tryAutoplay, { once: true });
+          void tryAutoplay();
+        }
       }
     } else if (thumbnail) {
       const img = document.createElement("img");
