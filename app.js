@@ -318,6 +318,11 @@ const renderContentGrid = (config) => {
 
     tile.append(media, content);
     fragment.appendChild(tile);
+    
+    // Ajout à l'observateur de révélation (reveal) global s'il existe
+    if (window._revealObserver) {
+      window._revealObserver.observe(tile);
+    }
   }
 
   grid.appendChild(fragment);
@@ -750,6 +755,8 @@ const setupScrollReveal = () => {
       }
     });
   }, { threshold: 0.1 });
+
+  window._revealObserver = observer;
 
   document.querySelectorAll(".panel__content").forEach(el => {
     el.classList.add("reveal");
