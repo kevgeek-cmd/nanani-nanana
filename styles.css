@@ -860,10 +860,12 @@ body:not(.admin) .nav__link:hover::after {
 }
 
 .cms-card {
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
+  background: #ffffff; /* Fond blanc pour les cartes pour une lecture claire */
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 24px;
   margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  color: #000;
 }
 
 .cms-card__title {
@@ -877,16 +879,25 @@ body:not(.admin) .nav__link:hover::after {
 }
 
 .cms-field__input {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--glass-border);
   border-radius: 12px;
-  color: #fff;
+  color: #000; /* Texte noir pour être visible sur fond blanc */
   padding: 12px 16px;
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
 }
 
 .cms-field__input:focus {
   border-color: var(--accent);
-  background: rgba(255, 255, 255, 0.08);
+  background: #fff;
+  outline: none;
+}
+
+.cms-field__textarea {
+  min-height: 100px;
+  resize: vertical;
 }
 
 .cms-btn--primary {
