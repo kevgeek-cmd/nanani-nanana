@@ -156,16 +156,30 @@ const fetchSupabaseConfig = async (cfg) => {
 };
 
 const loadConfig = async () => {
-  const local = safeJsonParse(localStorage.getItem(CMS_STORAGE_KEY));
-  if (local) return normalizeConfig(local);
-
+  const isLocal = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  
   try {
     const remote = await fetchJson("cms.json");
     const base = normalizeConfig(remote);
+    
+    // 1. Tenter Supabase en priorité pour les données les plus fraîches
     const fromSupabase = await fetchSupabaseConfig(base);
-    if (fromSupabase) return normalizeConfig({ ...fromSupabase, supabase: base.supabase });
+    if (fromSupabase) {
+      console.log("NN: Config chargée depuis Supabase.");
+      return normalizeConfig({ ...fromSupabase, supabase: base.supabase });
+    }
+    
+    // 2. Fallback sur le LocalStorage uniquement si on est en développement ou si Supabase échoue
+    const local = safeJsonParse(localStorage.getItem(CMS_STORAGE_KEY));
+    if (local && (isLocal || !base.supabase.enabled)) {
+      console.log("NN: Config chargée depuis LocalStorage (mode preview/fallback).");
+      return normalizeConfig(local);
+    }
+
+    console.log("NN: Config chargée depuis cms.json (par défaut).");
     return base;
-  } catch {
+  } catch (err) {
+    console.error("NN: Erreur lors du chargement de la config :", err);
     return normalizeConfig(null);
   }
 };
@@ -196,8 +210,21 @@ const renderContentGrid = (config) => {
 
   const items = Array.isArray(config.content) ? config.content : [];
   const fragment = document.createDocumentFragment();
-  const canAutoplay = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const video = entry.target.querySelector("video");
+        if (!video) return;
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    },
+    { threshold: 0.5 }
+  );
 
   for (const item of items) {
     const title = String(item?.title || "").trim();
@@ -223,56 +250,11 @@ const renderContentGrid = (config) => {
       video.muted = true;
       video.playsInline = true;
       video.loop = true;
-      video.preload = "none";
+      video.preload = "metadata";
       if (thumbnail) video.poster = thumbnail;
+      video.src = videoUrl;
       media.appendChild(video);
-
-      const hoverPlayback = canAutoplay && canHover;
-      if (hoverPlayback) {
-        video.dataset.src = videoUrl;
-        const ensureSrc = () => {
-          if (video.getAttribute("src")) return;
-          const src = String(video.dataset.src || "").trim();
-          if (!src) return;
-          video.src = src;
-          try {
-            video.load();
-          } catch {}
-        };
-
-        const play = async () => {
-          ensureSrc();
-          try {
-            const p = video.play();
-            if (p && typeof p.then === "function") await p;
-          } catch {}
-        };
-        const pause = () => {
-          try {
-            video.pause();
-          } catch {}
-        };
-        media.addEventListener("pointerenter", play);
-        media.addEventListener("pointerleave", pause);
-        media.addEventListener("focusin", play);
-        media.addEventListener("focusout", pause);
-      } else {
-        // On touch/coarse pointers there is no hover, so load the source directly.
-        video.src = videoUrl;
-        try {
-          video.load();
-        } catch {}
-        if (canAutoplay) {
-          const tryAutoplay = async () => {
-            try {
-              const p = video.play();
-              if (p && typeof p.then === "function") await p;
-            } catch {}
-          };
-          video.addEventListener("canplay", tryAutoplay, { once: true });
-          void tryAutoplay();
-        }
-      }
+      observer.observe(a);
     } else if (thumbnail) {
       const img = document.createElement("img");
       img.className = "tile__img";
@@ -281,13 +263,6 @@ const renderContentGrid = (config) => {
       img.decoding = "async";
       img.src = thumbnail;
       media.appendChild(img);
-    }
-
-    if (description) {
-      const desc = document.createElement("div");
-      desc.className = "tile__desc";
-      desc.textContent = description;
-      media.appendChild(desc);
     }
 
     const body = document.createElement("div");
@@ -305,7 +280,11 @@ const renderContentGrid = (config) => {
     metaEl.className = "tile__meta";
     metaEl.textContent = meta || "Cliquez pour ouvrir";
 
-    body.append(tagEl, titleEl, metaEl);
+    const descEl = document.createElement("div");
+    descEl.className = "tile__desc";
+    descEl.textContent = description || "";
+
+    body.append(tagEl, titleEl, metaEl, descEl);
     a.append(media, body);
     fragment.appendChild(a);
   }
@@ -434,7 +413,25 @@ const renderContact = (config) => {
   }
 };
 
+const updateMetadata = (config) => {
+  const name = config.branding?.name || "NANANI NANANA";
+  const slogan = config.branding?.slogan || "";
+  const title = `${name} — ${slogan}`;
+  
+  document.title = title;
+  
+  const metaTitle = document.querySelector('meta[property="og:title"]');
+  if (metaTitle) metaTitle.setAttribute("content", title);
+  
+  const metaDesc = document.querySelector('meta[name="description"]');
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  const sloganFull = config.branding?.eyebrow + " : " + config.branding?.slogan;
+  if (metaDesc) metaDesc.setAttribute("content", sloganFull);
+  if (ogDesc) ogDesc.setAttribute("content", sloganFull);
+};
+
 const renderTextBlocks = (config) => {
+  updateMetadata(config);
   setText(byId("brandTop"), config.branding?.name);
   setText(byId("loaderBrand"), config.branding?.name);
   setText(byId("heroTitle"), config.branding?.name);
@@ -531,214 +528,126 @@ const setupProgress = () => {
   onScroll();
 };
 
-const setupVideoStory = (config) => {
-  const sections = Array.from(document.querySelectorAll(".panel[data-video-key]"));
-  if (!sections.length) return { setActiveSection: () => {} };
-
-  const fallback = byId("bgFallback");
-  const videoA = byId("bgVideoA");
-  const videoB = byId("bgVideoB");
-
-  const videos = { a: videoA, b: videoB };
-  let active = "a";
-  let currentKey = "";
-  let currentSrc = "";
-  let lockUntil = 0;
-  let lockedKey = "";
-  let isScrolling = false;
-  let scrollIdleTimer = 0;
-  let playBlocked = false;
-
-  const applyFallback = (enabled) => {
-    if (fallback) fallback.style.opacity = enabled ? "1" : "0";
+const setupBackgroundEngine = () => {
+  const canvas = byId("bgCanvas");
+  if (!canvas) return { setSection: () => {} };
+  const ctx = canvas.getContext("2d");
+  let w, h;
+  let frame = 0;
+  let currentMode = Math.floor(Math.random() * 5);
+  let targetMode = currentMode;
+  let transition = 1;
+  
+  const resize = () => {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
   };
+  window.addEventListener("resize", resize);
+  resize();
 
-  const pauseAndUnload = (el) => {
-    if (!el) return;
-    try {
-      el.pause();
-    } catch {}
-    try {
-      el.currentTime = 0;
-    } catch {}
-  };
-
-  const prime = (el, src, poster) =>
-    new Promise((resolve) => {
-      if (!el) return resolve(false);
-
-      el.loop = true;
-      el.muted = true;
-      el.playsInline = true;
-      el.preload = "metadata";
-      if (poster) el.poster = poster;
-
-      const done = (ok) => {
-        el.removeEventListener("canplay", onCanPlay);
-        window.clearTimeout(t);
-        resolve(ok);
-      };
-
-      const onCanPlay = () => done(true);
-      el.addEventListener("canplay", onCanPlay, { once: true });
-
-      const t = window.setTimeout(() => done(false), 2400);
-
-      el.src = src;
-      el.load();
-    });
-
-  const playSafe = async (el) => {
-    if (!el) return;
-    try {
-      const p = el.play();
-      if (p && typeof p.then === "function") await p;
-      playBlocked = false;
-    } catch {}
-  };
-
-  const tryUnlockAutoplay = async () => {
-    const a = videos.a;
-    const b = videos.b;
-    if (a?.getAttribute("src")) await playSafe(a);
-    if (b?.getAttribute("src")) await playSafe(b);
-  };
-
-  const onFirstUserGesture = async () => {
-    if (!playBlocked) return;
-    await tryUnlockAutoplay();
-  };
-
-  document.addEventListener("pointerdown", onFirstUserGesture, { passive: true });
-  document.addEventListener("keydown", onFirstUserGesture);
-
-  const swapTo = async ({ src, poster }) => {
-    const nextSrc = String(src || "").trim();
-    if (!nextSrc) {
-      currentSrc = "";
-      applyFallback(true);
-      if (videos.a) videos.a.classList.remove("is-active");
-      if (videos.b) videos.b.classList.remove("is-active");
-      pauseAndUnload(videos.a);
-      pauseAndUnload(videos.b);
-      return;
+  // --- Animations ---
+  
+  const drawParticles = (f, t) => {
+    ctx.strokeStyle = `rgba(${varToRgb('--accent-rgb')}, ${0.2 * t})`;
+    for(let i=0; i<40; i++) {
+      const x = (Math.sin(f * 0.01 + i) * w * 0.4) + w/2;
+      const y = (Math.cos(f * 0.02 + i * 2) * h * 0.4) + h/2;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + Math.sin(f*0.05)*2, 0, Math.PI*2);
+      ctx.stroke();
     }
-
-    if (nextSrc === currentSrc) return;
-    currentSrc = nextSrc;
-
-    const incomingKey = active === "a" ? "b" : "a";
-    const incoming = videos[incomingKey];
-    const outgoing = videos[active];
-
-    applyFallback(false);
-    const ok = await prime(incoming, nextSrc, poster);
-    if (incoming?.getAttribute("src") !== nextSrc) return;
-    await playSafe(incoming);
-    if (incoming?.paused) playBlocked = true;
-
-    incoming.classList.add("is-active");
-    outgoing?.classList.remove("is-active");
-    active = incomingKey;
-
-    window.setTimeout(() => {
-      if (!outgoing) return;
-      outgoing.preload = "none";
-      pauseAndUnload(outgoing);
-    }, ok ? 720 : 260);
   };
 
-  const getVideoForKey = (key) => {
-    const entry = config.backgroundVideos?.[key];
-    if (!entry || typeof entry !== "object") return null;
-    const src = String(entry.src || "").trim();
-    const poster = String(entry.poster || "").trim();
-    return src ? { src, poster } : null;
+  const drawGrid = (f, t) => {
+    const step = 60;
+    ctx.strokeStyle = `rgba(255,255,255,${0.05 * t})`;
+    for(let x=0; x<w; x+=step) {
+      ctx.beginPath();
+      for(let y=0; y<h; y+=10) {
+        const off = Math.sin(x*0.01 + y*0.01 + f*0.05) * 20;
+        ctx.lineTo(x + off, y);
+      }
+      ctx.stroke();
+    }
   };
 
-  const setActiveSection = (key, options = {}) => {
-    const safeKey = String(key || "").trim();
-    if (!safeKey || safeKey === currentKey) return;
-    if (!options.force && performance.now() - setActiveSection._lastAt < 350) return;
-    setActiveSection._lastAt = performance.now();
-    currentKey = safeKey;
-    const video = getVideoForKey(safeKey);
-    swapTo(video || { src: "", poster: "" });
+  const drawStars = (f, t) => {
+    for(let i=0; i<100; i++) {
+      const s = (i * 13.5 + f * 2) % w;
+      const y = (i * 21.3) % h;
+      const size = (s / w) * 3;
+      ctx.fillStyle = `rgba(255,255,255,${(s/w) * 0.4 * t})`;
+      ctx.fillRect(s, y, size, size);
+    }
   };
-  setActiveSection._lastAt = 0;
 
-  const pickSectionKeyAtViewport = () => {
-    const centerY = window.innerHeight * 0.45;
-    let bestKey = "";
-    let bestDist = Number.POSITIVE_INFINITY;
+  const drawHelix = (f, t) => {
+    ctx.fillStyle = `rgba(${varToRgb('--accent-rgb')}, ${0.3 * t})`;
+    for(let i=0; i<30; i++) {
+      const x = w/2 + Math.sin(f*0.05 + i*0.5) * 100;
+      const y = (i * (h/30));
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI*2);
+      ctx.fill();
+    }
+  };
 
-    for (const s of sections) {
-      const rect = s.getBoundingClientRect();
-      const inRange = rect.top <= centerY && rect.bottom >= centerY;
-      const dist = inRange ? 0 : Math.min(Math.abs(rect.top - centerY), Math.abs(rect.bottom - centerY));
-      if (dist < bestDist) {
-        bestDist = dist;
-        bestKey = String(s.dataset.videoKey || "");
+  const drawFlow = (f, t) => {
+    ctx.fillStyle = `rgba(255,255,255,${0.02 * t})`;
+    for(let i=0; i<5; i++) {
+      ctx.beginPath();
+      ctx.ellipse(w/2, h/2, w*0.3 + Math.sin(f*0.02+i)*50, h*0.3 + Math.cos(f*0.02+i)*50, f*0.01, 0, Math.PI*2);
+      ctx.fill();
+    }
+  };
+
+  const modes = [drawParticles, drawGrid, drawStars, drawHelix, drawFlow];
+
+  const varToRgb = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim() || "255,255,255";
+
+  const loop = () => {
+    frame++;
+    ctx.clearRect(0, 0, w, h);
+    
+    if (transition < 1) transition += 0.01;
+    
+    modes[currentMode](frame, 1);
+    
+    requestAnimationFrame(loop);
+  };
+  loop();
+
+  return {
+    setSection: (key) => {
+      // On peut changer de mode aléatoirement au scroll
+      if (Math.random() > 0.7) {
+        currentMode = Math.floor(Math.random() * modes.length);
       }
     }
-    return bestKey;
   };
+};
 
-  const scheduleScrollIdleUpdate = () => {
-    isScrolling = true;
-    window.clearTimeout(scrollIdleTimer);
-    scrollIdleTimer = window.setTimeout(() => {
-      isScrolling = false;
-      const key = pickSectionKeyAtViewport();
-      if (!key) return;
-      setActiveSection(key, { force: true });
-      setActiveNav(key);
-    }, 180);
-  };
+const setupVideoStory = (config) => {
+  const engine = setupBackgroundEngine();
+  const sections = Array.from(document.querySelectorAll(".panel[data-video-key]"));
+  
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries.find(e => e.isIntersecting);
+    if (visible) {
+      engine.setSection(visible.target.dataset.videoKey);
+      setActiveNav(visible.target.dataset.videoKey);
+    }
+  }, { threshold: 0.5 });
 
-  const lockToSection = (key, durationMs = 1400) => {
-    const safeKey = String(key || "").trim();
-    if (!safeKey) return;
-    lockedKey = safeKey;
-    lockUntil = performance.now() + Math.max(0, Number(durationMs) || 0);
-    setActiveSection(safeKey, { force: true });
-    setActiveNav(safeKey);
-  };
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((e) => e.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-      if (!visible) return;
-      if (visible.intersectionRatio < 0.35) return;
-      const key = visible.target instanceof HTMLElement ? visible.target.dataset.videoKey : "";
-      if (isScrolling) return;
-      if (lockUntil && performance.now() < lockUntil && key !== lockedKey) return;
-      if (key === lockedKey) lockUntil = 0;
-      setActiveSection(key);
-      setActiveNav(String(key || ""));
-    },
-    { root: null, rootMargin: "-22% 0px -52% 0px", threshold: [0, 0.2, 0.35, 0.55, 0.8] },
-  );
-
-  for (const s of sections) observer.observe(s);
-  window.addEventListener("scroll", scheduleScrollIdleUpdate, { passive: true });
+  sections.forEach(s => observer.observe(s));
 
   const setActiveNav = (key) => {
-    const links = document.querySelectorAll('.nav__link[data-target]:not(.nav__cms)');
-    for (const l of links) {
-      const t = l instanceof HTMLElement ? l.dataset.target : "";
-      l.classList.toggle("is-active", t === key);
-    }
+    document.querySelectorAll('.nav__link[data-target]').forEach(l => {
+      l.classList.toggle("is-active", l.dataset.target === key);
+    });
   };
 
-  const firstKey = sections[0]?.dataset?.videoKey || "";
-  setActiveSection(firstKey);
-  setActiveNav(firstKey);
-
-  return { setActiveSection, lockToSection };
+  return { lockToSection: (id) => {} };
 };
 
 const setupHeroScrollButton = () => {
@@ -773,11 +682,47 @@ const hideLoader = () => {
   loader.classList.add("is-hidden");
 };
 
+const setupHeaderHide = () => {
+  const header = document.querySelector(".header");
+  if (!header) return;
+  let lastScroll = 0;
+  window.addEventListener("scroll", () => {
+    const currentScroll = window.pageYOffset;
+    if (currentScroll <= 0) {
+      header.classList.remove("is-hidden");
+      return;
+    }
+    if (currentScroll > lastScroll && !header.classList.contains("is-hidden")) {
+      header.classList.add("is-hidden");
+    } else if (currentScroll < lastScroll && header.classList.contains("is-hidden")) {
+      header.classList.remove("is-hidden");
+    }
+    lastScroll = currentScroll;
+  }, { passive: true });
+};
+
+const setupScrollReveal = () => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("reveal-active");
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll(".panel__content").forEach(el => {
+    el.classList.add("reveal");
+    observer.observe(el);
+  });
+};
+
 const main = async () => {
   await cleanupServiceWorkers();
   setupCursor();
   setupProgress();
   setupHeroScrollButton();
+  setupHeaderHide();
+  setupScrollReveal();
 
   const config = await loadConfig();
   renderMenu(config);

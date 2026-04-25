@@ -57,16 +57,8 @@
     </header>
 
     <div class="bg" aria-hidden="true">
-      <video
-        class="bg__video bg__video--a is-active"
-        id="bgVideoA"
-        muted
-        playsinline
-        preload="none"
-      ></video>
-      <video class="bg__video bg__video--b" id="bgVideoB" muted playsinline preload="none"></video>
+      <canvas id="bgCanvas"></canvas>
       <div class="bg__overlay"></div>
-      <div class="bg__fallback" id="bgFallback"></div>
     </div>
 
     <main class="page" id="page">

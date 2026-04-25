@@ -221,18 +221,45 @@ const toggleField = ({ label, checked, onChange }) =>
     el("input", { type: "checkbox", checked: checked ? "checked" : null, oninput: (e) => onChange(Boolean(e.target.checked)) })
   ]);
 
+const uploadFileToSupabase = async (file) => {
+  if (!supabaseClient) return null;
+  const ext = file.name.split(".").pop();
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { data, error } = await supabaseClient.storage.from("media").upload(path, file);
+  if (error) {
+    showToast(`Erreur upload: ${error.message}`);
+    return null;
+  }
+  const { data: { publicUrl } } = supabaseClient.storage.from("media").getPublicUrl(data.path);
+  return publicUrl;
+};
+
 const uploadButton = ({ onDataUrl }) => {
-  const input = el("input", { type: "file", accept: "image/*", hidden: true });
+  const input = el("input", { type: "file", accept: "image/*,video/mp4", hidden: true });
   const btn = el("button", { class: "cms-upload", type: "button", text: "Upload", onclick: () => input.click() });
   input.addEventListener("change", async () => {
     const file = input.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      onDataUrl(String(reader.result || ""));
-      input.value = "";
-    };
-    reader.readAsDataURL(file);
+
+    if (supabaseClient) {
+      btn.textContent = "Upload...";
+      btn.disabled = true;
+      const url = await uploadFileToSupabase(file);
+      btn.textContent = "Upload";
+      btn.disabled = false;
+      if (url) {
+        onDataUrl(url);
+        showToast("Fichier envoyé sur Supabase !");
+      }
+    } else {
+      // Fallback Base64 (Local mode)
+      const reader = new FileReader();
+      reader.onload = () => {
+        onDataUrl(String(reader.result || ""));
+        input.value = "";
+      };
+      reader.readAsDataURL(file);
+    }
   });
   return el("div", {}, [btn, input]);
 };
@@ -309,8 +336,10 @@ const save = async () => {
       showToast(error.message);
       return;
     }
+    // Vider le localStorage pour éviter les conflits de version
+    localStorage.removeItem(CMS_STORAGE_KEY);
     setDirty(false);
-    showToast("Enregistré (Supabase).");
+    showToast("Enregistré (Supabase) !");
     return;
   }
 
@@ -354,14 +383,14 @@ const reset = async () => {
 };
 
 const tabs = [
-  { id: "general", label: "Général", subtitle: "Paramètres du site." },
-  { id: "header", label: "En-tête", subtitle: "Menu et identité." },
-  { id: "texts", label: "Textes", subtitle: "Éditer tous les textes visibles du site." },
-  { id: "ads", label: "Publicités", subtitle: "Blocs partenaires." },
-  { id: "blog", label: "Blog", subtitle: "Articles et publications." },
-  { id: "videos", label: "Vidéos", subtitle: "Vidéos de fond + contenus 9:16." },
-  { id: "contact", label: "Contact", subtitle: "Email et réseaux." },
-  { id: "admins", label: "Admins", subtitle: "Gérer les comptes administrateurs." }
+  { id: "general", label: "⚙️ Général", subtitle: "Paramètres globaux et identité." },
+  { id: "header", label: "🔗 Menu", subtitle: "Navigation et liens." },
+  { id: "texts", label: "📝 Textes", subtitle: "Édition des contenus textuels." },
+  { id: "ads", label: "📢 Pubs", subtitle: "Emplacements publicitaires." },
+  { id: "blog", label: "✍️ Blog", subtitle: "Gestion des articles." },
+  { id: "videos", label: "🎬 Reels", subtitle: "Vidéos de fond et capsules." },
+  { id: "contact", label: "📧 Contact", subtitle: "Email et réseaux sociaux." },
+  { id: "admins", label: "👤 Admins", subtitle: "Gestion des accès." }
 ];
 
 const setActiveTab = (tabId) => {
@@ -924,7 +953,7 @@ const renderVideos = () => {
     ])
   ]);
 
-  const content = card("Contenus 9:16", [
+  const content = card("Gestion des Reels (9:16)", [
     el("div", { class: "cms-card__body" }, [
       el("div", { class: "cms-row" }, [
         el("button", {
