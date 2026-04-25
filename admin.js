@@ -198,9 +198,10 @@ const el = (tag, props = {}, children = []) => {
 const card = (title, children = []) =>
   el("section", { class: "cms-card" }, [el("div", { class: "cms-card__title", text: title }), ...children]);
 
-const field = ({ label, value, onInput, type = "text", placeholder = "", right = null }) =>
+const field = ({ label, value, onInput, type = "text", placeholder = "", right = null, subtitle = "" }) =>
   el("label", { class: "cms-field" }, [
     el("span", { class: "cms-field__label", text: label }),
+    subtitle ? el("div", { class: "cms-field__subtitle", text: subtitle }) : null,
     el("div", { class: "cms-field__row" }, [
       el("input", { class: "cms-field__input", type, value, placeholder, oninput: (e) => onInput(e.target.value) }),
       right
@@ -431,6 +432,15 @@ const renderGeneral = () => {
   return el("div", { class: "cms-grid" }, [
     card("Paramètres du site", [
       el("div", { class: "cms-card__body" }, [
+        field({
+          label: "Mode Arrière-plan",
+          value: state.branding.backgroundMode || "generative",
+          onInput: (v) => {
+            state.branding.backgroundMode = v;
+            setDirty(true);
+          },
+          subtitle: "Tapez 'generative' pour la 3D ou 'video' pour vos vidéos MP4."
+        }),
         field({
           label: "Nom du site (onglet navigateur)",
           value: state.general.siteTitle || "",
@@ -941,7 +951,14 @@ const renderVideos = () => {
             onInput: (v) => {
               state.backgroundVideos[k] = { ...entry, poster: v, provider: entry.provider || "custom" };
               setDirty(true);
-            }
+            },
+            right: uploadButton({
+              onDataUrl: (url) => {
+                state.backgroundVideos[k] = { ...entry, poster: url, provider: "custom" };
+                setDirty(true);
+                render();
+              }
+            })
           }),
           el("div", { class: "cms-row" }, [
             el(

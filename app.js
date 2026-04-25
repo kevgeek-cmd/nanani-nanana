@@ -528,9 +528,19 @@ const setupProgress = () => {
   onScroll();
 };
 
-const setupBackgroundEngine = () => {
+const setupBackgroundEngine = (config) => {
   const canvas = byId("bgCanvas");
   if (!canvas) return { setSection: () => {} };
+  
+  const mode = config.branding?.backgroundMode || "generative";
+  if (mode === "video") {
+    canvas.style.display = "none";
+    // Si on veut vraiment supporter le mode vidéo, il faudrait rajouter un overlay vidéo ici ou réactiver l'ancien système.
+    // Pour l'instant, on cache le canvas.
+    return { setSection: () => {} };
+  }
+
+  canvas.style.display = "block";
   const ctx = canvas.getContext("2d");
   let w, h;
   let frame = 0;
@@ -628,7 +638,7 @@ const setupBackgroundEngine = () => {
 };
 
 const setupVideoStory = (config) => {
-  const engine = setupBackgroundEngine();
+  const engine = setupBackgroundEngine(config);
   const sections = Array.from(document.querySelectorAll(".panel[data-video-key]"));
   
   const observer = new IntersectionObserver((entries) => {
