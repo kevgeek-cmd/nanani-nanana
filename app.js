@@ -235,11 +235,8 @@ const renderContentGrid = (config) => {
     const thumbnail = String(item?.thumbnail || "").trim();
     const videoUrl = String(item?.videoUrl || item?.video || "").trim();
 
-    const a = document.createElement("a");
-    a.className = "tile";
-    a.href = href || "#";
-    a.target = href ? "_blank" : "_self";
-    a.rel = href ? "noopener noreferrer" : "";
+    const tile = document.createElement("div");
+    tile.className = "tile reveal";
 
     const media = document.createElement("div");
     media.className = "tile__media";
@@ -275,7 +272,7 @@ const renderContentGrid = (config) => {
         if (thumbnail) video.poster = thumbnail;
         video.src = videoUrl;
         media.appendChild(video);
-        observer.observe(a);
+        observer.observe(tile);
       }
     } else if (thumbnail) {
       const img = document.createElement("img");
@@ -287,14 +284,14 @@ const renderContentGrid = (config) => {
       media.appendChild(img);
     }
 
-    const body = document.createElement("div");
-    body.className = "tile__body";
+    const content = document.createElement("div");
+    content.className = "tile__content";
 
     const tagEl = document.createElement("div");
     tagEl.className = "tile__tag";
     tagEl.textContent = tag || "Média";
 
-    const titleEl = document.createElement("div");
+    const titleEl = document.createElement("h3");
     titleEl.className = "tile__title";
     titleEl.textContent = title || "Nouveau contenu";
 
