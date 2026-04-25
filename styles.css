@@ -514,6 +514,31 @@ body:not(.admin) .nav__link:hover::after {
   transform: scale(1.1);
 }
 
+.tile__content {
+  position: relative;
+  z-index: 2; /* Un peu plus haut */
+  padding: 30px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent 60%);
+  pointer-events: none; /* Laisse passer les clics vers la vidéo */
+}
+
+.tile__content > * {
+  pointer-events: auto; /* Réactive les clics pour le texte et les boutons si besoin */
+}
+
+.tile__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border: none;
+  pointer-events: auto; /* S'assure que la vidéo capte les clics */
+}
+
 .tile__body {
   position: absolute;
   inset: 0;
