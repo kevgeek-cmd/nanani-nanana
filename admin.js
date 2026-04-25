@@ -1041,6 +1041,7 @@ const renderVideos = () => {
           field({
             label: "Vidéo (MP4 9:16)",
             value: item.videoUrl || item.video || "",
+            subtitle: "Lien direct MP4, YouTube ou TikTok.",
             onInput: (v) => {
               state.content[idx] = { ...item, videoUrl: v };
               setDirty(true);

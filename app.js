@@ -245,16 +245,38 @@ const renderContentGrid = (config) => {
     media.className = "tile__media";
 
     if (videoUrl) {
-      const video = document.createElement("video");
-      video.className = "tile__video";
-      video.muted = true;
-      video.playsInline = true;
-      video.loop = true;
-      video.preload = "metadata";
-      if (thumbnail) video.poster = thumbnail;
-      video.src = videoUrl;
-      media.appendChild(video);
-      observer.observe(a);
+      const isYoutube = videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be");
+      const isTiktok = videoUrl.includes("tiktok.com");
+
+      if (isYoutube || isTiktok) {
+        const iframe = document.createElement("iframe");
+        iframe.className = "tile__video";
+        let embedUrl = videoUrl;
+        
+        if (isYoutube) {
+          const id = videoUrl.split("v=")[1] || videoUrl.split("/").pop();
+          embedUrl = `https://www.youtube.com/embed/${id.split("&")[0]}?autoplay=1&mute=1&loop=1`;
+        } else if (isTiktok) {
+          const id = videoUrl.split("/video/")[1] || videoUrl.split("/").pop();
+          embedUrl = `https://www.tiktok.com/embed/v2/${id.split("?")[0]}`;
+        }
+        
+        iframe.src = embedUrl;
+        iframe.frameBorder = "0";
+        iframe.allow = "autoplay; encrypted-media";
+        media.appendChild(iframe);
+      } else {
+        const video = document.createElement("video");
+        video.className = "tile__video";
+        video.muted = true;
+        video.playsInline = true;
+        video.loop = true;
+        video.preload = "metadata";
+        if (thumbnail) video.poster = thumbnail;
+        video.src = videoUrl;
+        media.appendChild(video);
+        observer.observe(a);
+      }
     } else if (thumbnail) {
       const img = document.createElement("img");
       img.className = "tile__img";
