@@ -1471,3 +1471,14 @@ body.admin {
     grid-template-columns: 1fr;
   }
 }
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1.2s var(--ease), transform 1.2s var(--ease);
+}
+
+.reveal-active {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -548,23 +548,23 @@ const setupBackgroundEngine = () => {
   // --- Animations ---
   
   const drawParticles = (f, t) => {
-    ctx.strokeStyle = `rgba(${varToRgb('--accent-rgb')}, ${0.2 * t})`;
+    ctx.strokeStyle = `rgba(${varToRgb('--accent-rgb')}, ${0.4 * t})`;
     for(let i=0; i<40; i++) {
       const x = (Math.sin(f * 0.01 + i) * w * 0.4) + w/2;
       const y = (Math.cos(f * 0.02 + i * 2) * h * 0.4) + h/2;
       ctx.beginPath();
-      ctx.arc(x, y, 2 + Math.sin(f*0.05)*2, 0, Math.PI*2);
+      ctx.arc(x, y, 4 + Math.sin(f*0.05)*2, 0, Math.PI*2);
       ctx.stroke();
     }
   };
 
   const drawGrid = (f, t) => {
-    const step = 60;
-    ctx.strokeStyle = `rgba(255,255,255,${0.05 * t})`;
+    const step = 80;
+    ctx.strokeStyle = `rgba(255,255,255,${0.15 * t})`;
     for(let x=0; x<w; x+=step) {
       ctx.beginPath();
-      for(let y=0; y<h; y+=10) {
-        const off = Math.sin(x*0.01 + y*0.01 + f*0.05) * 20;
+      for(let y=0; y<h; y+=15) {
+        const off = Math.sin(x*0.01 + y*0.01 + f*0.05) * 40;
         ctx.lineTo(x + off, y);
       }
       ctx.stroke();
@@ -572,31 +572,31 @@ const setupBackgroundEngine = () => {
   };
 
   const drawStars = (f, t) => {
-    for(let i=0; i<100; i++) {
-      const s = (i * 13.5 + f * 2) % w;
+    for(let i=0; i<150; i++) {
+      const s = (i * 13.5 + f * 4) % w;
       const y = (i * 21.3) % h;
-      const size = (s / w) * 3;
-      ctx.fillStyle = `rgba(255,255,255,${(s/w) * 0.4 * t})`;
+      const size = (s / w) * 4;
+      ctx.fillStyle = `rgba(255,255,255,${(s/w) * 0.6 * t})`;
       ctx.fillRect(s, y, size, size);
     }
   };
 
   const drawHelix = (f, t) => {
-    ctx.fillStyle = `rgba(${varToRgb('--accent-rgb')}, ${0.3 * t})`;
-    for(let i=0; i<30; i++) {
-      const x = w/2 + Math.sin(f*0.05 + i*0.5) * 100;
-      const y = (i * (h/30));
+    ctx.fillStyle = `rgba(${varToRgb('--accent-rgb')}, ${0.5 * t})`;
+    for(let i=0; i<40; i++) {
+      const x = w/2 + Math.sin(f*0.05 + i*0.4) * 150;
+      const y = (i * (h/40));
       ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI*2);
+      ctx.arc(x, y, 6, 0, Math.PI*2);
       ctx.fill();
     }
   };
 
   const drawFlow = (f, t) => {
-    ctx.fillStyle = `rgba(255,255,255,${0.02 * t})`;
-    for(let i=0; i<5; i++) {
+    ctx.fillStyle = `rgba(255,255,255,${0.08 * t})`;
+    for(let i=0; i<6; i++) {
       ctx.beginPath();
-      ctx.ellipse(w/2, h/2, w*0.3 + Math.sin(f*0.02+i)*50, h*0.3 + Math.cos(f*0.02+i)*50, f*0.01, 0, Math.PI*2);
+      ctx.ellipse(w/2, h/2, w*0.35 + Math.sin(f*0.02+i)*80, h*0.35 + Math.cos(f*0.02+i)*80, f*0.01, 0, Math.PI*2);
       ctx.fill();
     }
   };
