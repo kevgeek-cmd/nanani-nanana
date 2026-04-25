@@ -926,7 +926,14 @@ const renderVideos = () => {
             onInput: (v) => {
               state.backgroundVideos[k] = { ...entry, src: v, provider: entry.provider || "custom" };
               setDirty(true);
-            }
+            },
+            right: uploadButton({
+              onDataUrl: (url) => {
+                state.backgroundVideos[k] = { ...entry, src: url, provider: "custom" };
+                setDirty(true);
+                render();
+              }
+            })
           }),
           field({
             label: "Poster (optionnel)",
@@ -1020,7 +1027,14 @@ const renderVideos = () => {
             onInput: (v) => {
               state.content[idx] = { ...item, videoUrl: v };
               setDirty(true);
-            }
+            },
+            right: uploadButton({
+              onDataUrl: (url) => {
+                state.content[idx] = { ...item, videoUrl: url };
+                setDirty(true);
+                render();
+              }
+            })
           }),
           field({
             label: "Thumbnail (URL ou upload)",
