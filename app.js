@@ -303,9 +303,21 @@ const renderContentGrid = (config) => {
     descEl.className = "tile__desc";
     descEl.textContent = description || "";
 
-    body.append(tagEl, titleEl, metaEl, descEl);
-    a.append(media, body);
-    fragment.appendChild(a);
+    content.append(tagEl, titleEl, metaEl, descEl);
+    
+    if (href && href !== "#") {
+      let finalUrl = href;
+      if (!finalUrl.startsWith("http")) finalUrl = "https://" + finalUrl;
+      const linkBtn = document.createElement("a");
+      linkBtn.className = "tile__link";
+      linkBtn.href = finalUrl;
+      linkBtn.target = "_blank";
+      linkBtn.textContent = "En savoir plus →";
+      content.appendChild(linkBtn);
+    }
+
+    tile.append(media, content);
+    fragment.appendChild(tile);
   }
 
   grid.appendChild(fragment);
